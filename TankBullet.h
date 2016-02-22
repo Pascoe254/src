@@ -30,6 +30,8 @@ public:
 
 	float speed;
 
+	float tankangle;
+
 	TankBullet(SDL_Renderer *renderer, string filePath, float x, float y, int dirX, int dirY);
 
 	void Update(float deltaTime);

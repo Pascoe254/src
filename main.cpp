@@ -110,9 +110,20 @@ int main(int argc, char* argv[]){
 	if(!Mix_PlayingMusic())
 		Mix_PlayMusic(bgm, -1);
 
+	SDL_Rect bkgdRect;
+	bkgdRect.x=0;
+	bkgdRect.y=0;
+	bkgdRect.w=2048;
+	bkgdRect.h=1536;
+
+	float x_pos = 0.0f;
+	float y_pos = 0.0f;
+
 	Tank tank1 = Tank(renderer, 0 ,images_dir.c_str(),audio_dir.c_str(),50.0f,50.0f);
 
 	Turret turret1 = Turret(renderer , images_dir.c_str(),audio_dir.c_str(),800.0f,500.0f);
+
+	SDL_Texture *bkgd = IMG_LoadTexture(renderer,(images_dir+"background.png").c_str());
 
 	while (!quit){
 		thisTime = SDL_GetTicks();
@@ -139,16 +150,85 @@ int main(int argc, char* argv[]){
 				}
 				break;
 				case SDL_CONTROLLERAXISMOTION:
-					tank1.OnControllerAxis(e.caxis);
+
+					//tank1.OnControllerAxis(e.caxis);
+
 					break;
 			}
 		}
 
+		const Sint16 Xvalue = SDL_GameControllerGetAxis(gGameController0, SDL_CONTROLLER_AXIS_LEFTX);
+		const Sint16 Yvalue = SDL_GameControllerGetAxis(gGameController0, SDL_CONTROLLER_AXIS_LEFTY);
+
+		tank1.OnControllerAxis(Xvalue,Yvalue);
 		tank1.Update(deltaTime);
+
+		if((tank1.posRect.x >= 1024 - tank1.posRect.w) && (tank1.Xvalue > 8000)){
+
+			x_pos -= (tank1.speed) * deltaTime;
+
+			if((bkgdRect.x > -1024)){
+
+				bkgdRect.x=(int)(x_pos + 0.5f);
+			}
+			else{
+						x_pos = bkgdRect.x;
+			}
+		}
+
+
+			if((tank1.posRect.x <= 0) && (tank1.Xvalue < 8000)){
+
+			x_pos += (tank1.speed)*deltaTime;
+
+			if((bkgdRect.x < 0)){
+
+				bkgdRect.x=(int)(x_pos + 0.5f);
+			}else{
+				x_pos = bkgdRect.x;
+			}
+
+
+
+		}
+
+			if((tank1.posRect.y >= 768 - tank1.posRect.h) && (tank1.Yvalue > 8000)){
+
+				y_pos -= (tank1.speed) * deltaTime;
+
+				if((bkgdRect.y > -768)){
+
+					bkgdRect.y=(int)(y_pos + 0.5f);
+				}
+				else{
+							y_pos = bkgdRect.y;
+				}
+			}
+
+
+				if((tank1.posRect.y <= 0) && (tank1.Yvalue < 8000)){
+
+				y_pos += (tank1.speed)*deltaTime;
+
+				if((bkgdRect.y < 0)){
+
+					bkgdRect.y=(int)(y_pos + 0.5f);
+				}else{
+					y_pos = bkgdRect.y;
+				}
+
+
+
+			}
 
 		turret1.Update(deltaTime, tank1.posRect);
 
+
 		SDL_RenderClear(renderer);
+
+		SDL_RenderCopy(renderer,bkgd, NULL, &bkgdRect);
+
+
 
 		tank1.Draw(renderer);
 

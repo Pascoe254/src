@@ -63,9 +63,11 @@ public:
 
 	Mix_Chunk *fire;
 
+	Sint16 Xvalue, Yvalue;
+
 	Tank(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, float x, float y);
 
-	void OnControllerAxis(const SDL_ControllerAxisEvent event);
+	void OnControllerAxis(Sint16 X, Sint16 Y);
 
 	void OnControllerButton(const SDL_ControllerButtonEvent event);
 

@@ -47,6 +47,8 @@ public:
 
 	float x,y,turretangle;
 
+	float pos_x,pos_y;
+
 	SDL_Point center;
 
 	float fireTime = 0.0f;

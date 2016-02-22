@@ -18,8 +18,8 @@ TankBullet::TankBullet(SDL_Renderer *renderer, string filePath, float x, float y
 	pos_X=x;
 	pos_Y=y;
 
-	xDir = dirX;
-	yDir = dirY;
+	//xDir = dirX;
+	//yDir = dirY;
 
 }
 
@@ -38,8 +38,16 @@ void TankBullet::Update(float deltaTime){
 
 	if(active){
 
-		pos_X += (speed * xDir) * deltaTime;
-		pos_Y += (speed * yDir) * deltaTime;
+		//pos_X += (speed * xDir) * deltaTime;
+		//pos_Y += (speed * yDir) * deltaTime;
+
+		float radians = (tankangle * 3.14)/180;
+
+		float movex = speed *cos(radians);
+		float movey = speed *sin(radians);
+
+		pos_X+=(movex) * deltaTime;
+		pos_Y+=(movey) * deltaTime;
 
 		posRect.x=(int)(pos_X + 0.5f);
 		posRect.y=(int)(pos_Y + 0.5f);

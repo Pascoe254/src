@@ -60,23 +60,36 @@ Tank::Tank(SDL_Renderer *renderer, int pNum, string filePath, string audioPath,f
 
 void Tank::Update(float deltaTime){
 
-	if(xDir != 0 || yDir !=0){
-	x=posRect.x-xDir;
-	y=posRect.y-yDir;
-	tankangle = atan2(yDir,xDir)*180 / 3.14;
+	if(Xvalue != 0 || Yvalue !=0){
+	//x=posRect.x-xDir;
+	//y=posRect.y-yDir;
+	tankangle = atan2(Yvalue,Xvalue)*180 / 3.14;
 	oldAngle = tankangle;
-	xDirOld = xDir;
-	yDirOld = yDir;
+	//xDirOld = xDir;
+	//yDirOld = yDir;
+
+	float radians = (tankangle * 3.14)/180;
+
+	float movex = speed *cos(radians);
+	float movey = speed *sin(radians);
+
+	pos_X += (movex)* deltaTime;
+	pos_Y += (movey)* deltaTime;
+
+	posRect.x = (int)(pos_X + .5f);
+			posRect.y = (int)(pos_Y + .5f);
 
 	}else{
 		tankangle=oldAngle;
+
+
 	}
 
-	pos_X+=(speed *xDir) *deltaTime;
-	pos_Y += (speed *yDir) * deltaTime;
 
-	posRect.x = (int)(pos_X + .5f);
-	posRect.y = (int)(pos_Y + .5f);
+	//pos_X+=(speed *xDir) *deltaTime;
+	//pos_Y += (speed *yDir) * deltaTime;
+
+
 
 	if(posRect.x<0){
 		posRect.x=0;
@@ -121,9 +134,22 @@ void Tank::Draw(SDL_Renderer *renderer){
 
 
 
-void Tank::OnControllerAxis(const SDL_ControllerAxisEvent event)
+void Tank::OnControllerAxis(Sint16 X,Sint16 Y)
 {
-	if(event.which == 0 && playerNum == 0)
+
+	Xvalue=X;
+
+	Yvalue= Y;
+
+	if(!(Xvalue < -JOYSTICK_DEAD_ZONE)&& !(Xvalue > JOYSTICK_DEAD_ZONE))
+	{
+		Xvalue = 0.0f;
+	}
+	if(!(Yvalue < -JOYSTICK_DEAD_ZONE)&& !(Yvalue > JOYSTICK_DEAD_ZONE))
+	{
+		Yvalue = 0.0f;
+	}
+	/*if(event.which == 0 && playerNum == 0)
 	{
 		if(event.axis == 0)
 		{
@@ -175,7 +201,7 @@ void Tank::OnControllerAxis(const SDL_ControllerAxisEvent event)
 							yDir=0.0f;
 						}
 					}
-		}
+		}*/
 
 }
 
@@ -216,12 +242,12 @@ void Tank::CreateBullet(){
 		bulletList[i].pos_X = bulletList[i].posRect.x;
 		bulletList[i].pos_Y = bulletList[i].posRect.y;
 
-		if(xDir != 0|| yDir != 0){
-			bulletList[i].xDir =xDir;
-			bulletList[i].yDir =yDir;
+		if(Xvalue != 0|| Yvalue != 0){
+			bulletList[i].tankangle =tankangle;
+
 		}else{
-			bulletList[i].xDir = xDirOld;
-			bulletList[i].yDir = yDirOld;
+			bulletList[i].tankangle = oldAngle;
+
 		}
 		break;
 		}
