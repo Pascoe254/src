@@ -61,6 +61,17 @@ string images_dir = s_cwd + "\\src\\";
 string audio_dir = s_cwd + "\\src\\";
 #endif
 
+#if defined(__linux__)
+
+string currentWorkingDirectory(getcwd(NULL,0));
+
+string images_dir = currentWorkingDirectory +"/src/";
+
+string audio_dir = currentWorkingDirectory + "/src/";
+#endif
+
+
+
 float deltaTime=0.0;
 int thisTime = 0;
 int lastTime = 0.0;
@@ -69,9 +80,9 @@ int main(int argc, char* argv[]){
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	SDL_Window *window = nullptr;
+	SDL_Window *window;
 
-	SDL_Renderer *renderer = nullptr;
+	SDL_Renderer *renderer;
 
 	window = SDL_CreateWindow("Tank Wars!",
 			SDL_WINDOWPOS_CENTERED,
