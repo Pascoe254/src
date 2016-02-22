@@ -12,12 +12,30 @@ using namespace std;
 #include<SDL2_ttf/SDL_ttf.h>
 #endif
 
+#if defined(__linux__)
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
+#include "SDL2/SDL_mixer.h"
+#include "SDL2/SDL_ttf.h"
+#include <unistd.h>
+#endif
 
-//#include "turretbullet.h"
+
+
+#if defined(_WIN32) || (_WIN64)
+
+#include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_mixer.h"
+#include "SDL_ttf.h"
+#endif
+#include <time.h>
+
+#include "turretBullet.h"
 class Turret{
 public:
 	bool active;
-	//vector<TurretBullet> bulletList;
+	vector<TurretBullet> bulletList;
 
 	string turretPath;
 
@@ -31,7 +49,7 @@ public:
 
 	SDL_Point center;
 
-	float fireTimel = 0.0f;
+	float fireTime = 0.0f;
 	float fireRate = 1000.0;
 
 	Mix_Chunk *fire;

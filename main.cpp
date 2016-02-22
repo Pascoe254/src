@@ -5,6 +5,31 @@
 #include<SDL2_ttf/SDL_ttf.h>
 #endif
 
+#if defined(__linux__)
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
+#include "SDL2/SDL_mixer.h"
+#include "SDL2/SDL_ttf.h"
+#include <unistd.h>
+#endif
+
+
+
+#if defined(_WIN32) || (_WIN64)
+
+#include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_mixer.h"
+#include "SDL_ttf.h"
+#endif
+
+#if defined(_WIN32) || (_WIN64)
+
+#include<direct.h>
+#define getcwd _getcwd
+
+#endif
+
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
@@ -25,11 +50,22 @@ string images_dir = currentWorkingDirectory +"/src/";
 string audio_dir = currentWorkingDirectory + "/src/";
 #endif
 
+#if defined(_WIN32) || (_WIN64)
+
+
+string s_cwd(getcwd(NULL, 0));
+
+//create a string linking to the mac's image folder
+string images_dir = s_cwd + "\\src\\";
+
+string audio_dir = s_cwd + "\\src\\";
+#endif
+
 float deltaTime=0.0;
 int thisTime = 0;
 int lastTime = 0.0;
 
-int main(){
+int main(int argc, char* argv[]){
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -98,6 +134,8 @@ int main(){
 		}
 
 		tank1.Update(deltaTime);
+
+		turret1.Update(deltaTime, tank1.posRect);
 
 		SDL_RenderClear(renderer);
 
