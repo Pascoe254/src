@@ -70,6 +70,60 @@ string images_dir = currentWorkingDirectory +"/src/";
 string audio_dir = currentWorkingDirectory + "/src/";
 #endif
 
+TTF_Font *font;
+
+SDL_Color colorP1 = {255,255,255,255};
+SDL_Surface *playerSurface, *turretSurface;
+
+SDL_Texture *playerTexture, *turretTexture;
+
+SDL_Rect playerPos, turretPos;
+
+int playerHealth = 100;
+
+string tempText = "";
+
+void PlayerText(SDL_Renderer *renderer){
+	string Result;
+	ostringstream convert;
+	convert << playerHealth;
+	Result = convert.str();
+
+	tempText = "Player Health: " + Result;
+
+	//surface for font string
+
+	playerSurface = TTF_RenderText_Solid(font, tempText.c_str(), colorP1);
+
+	playerTexture = SDL_CreateTextureFromSurface(renderer, playerSurface);
+
+	SDL_QueryTexture(playerTexture, NULL ,NULL, &playerPos.w, &playerPos.h);
+
+	SDL_FreeSurface(playerSurface);
+
+}
+
+void TurretText(SDL_Renderer *renderer, int turretNum){
+	string Result;
+	ostringstream convert;
+	convert << turretNum;
+	Result = convert.str();
+	tempText = "Turret " + Result + "was the last hit..";
+
+	if(turretNum == 0){
+		tempText = "No Turret was hit...";
+	}
+
+	turretSurface = TTF_RenderText_Solid(font, tempText.c_str(),colorP1);
+
+	turretTexture = SDL_CreateTextureFromSurface(renderer, turretSurface);
+
+	SDL_QueryTexture(turretTexture, NULL, NULL , &TurretPos.w,&TurretPos.h);
+}
+
+
+
+
 
 
 float deltaTime=0.0;
@@ -116,12 +170,32 @@ int main(int argc, char* argv[]){
 	bkgdRect.w=2048;
 	bkgdRect.h=1536;
 
+	TTF_Init();
+
+	font = TTF_OpenFont((images_dir + "comic.ttf").c_str(),40);
+
+	playerPos.x=10;
+	playerPos.y=10;
+
+	turretPos.x = 600;
+	turretPos.y = 10;
+
+	PlayerText(renderer);
+
+	TurretText(renderer, 0);
+
+
+
 	float x_pos = 0.0f;
 	float y_pos = 0.0f;
 
 	Tank tank1 = Tank(renderer, 0 ,images_dir.c_str(),audio_dir.c_str(),50.0f,50.0f);
 
 	Turret turret1 = Turret(renderer , images_dir.c_str(),audio_dir.c_str(),800.0f,500.0f);
+	Turret turret2 = Turret(renderer , images_dir.c_str(),audio_dir.c_str(),1600.0f,250.0f);
+	Turret turret3 = Turret(renderer , images_dir.c_str(),audio_dir.c_str(),400.0f,1000.0f);
+	Turret turret4 = Turret(renderer , images_dir.c_str(),audio_dir.c_str(),1600.0f,1250.0f);
+
 
 	SDL_Texture *bkgd = IMG_LoadTexture(renderer,(images_dir+"background.png").c_str());
 
@@ -170,6 +244,10 @@ int main(int argc, char* argv[]){
 			if((bkgdRect.x > -1024)){
 
 				bkgdRect.x=(int)(x_pos + 0.5f);
+				turret1.TankMoveX(-tank1.speed, deltaTime);
+				turret2.TankMoveX(-tank1.speed, deltaTime);
+				turret3.TankMoveX(-tank1.speed, deltaTime);
+				turret4.TankMoveX(-tank1.speed, deltaTime);
 			}
 			else{
 						x_pos = bkgdRect.x;
@@ -184,6 +262,11 @@ int main(int argc, char* argv[]){
 			if((bkgdRect.x < 0)){
 
 				bkgdRect.x=(int)(x_pos + 0.5f);
+
+				turret1.TankMoveX(tank1.speed, deltaTime);
+				turret2.TankMoveX(tank1.speed, deltaTime);
+				turret3.TankMoveX(tank1.speed, deltaTime);
+				turret4.TankMoveX(tank1.speed, deltaTime);
 			}else{
 				x_pos = bkgdRect.x;
 			}
@@ -199,6 +282,11 @@ int main(int argc, char* argv[]){
 				if((bkgdRect.y > -768)){
 
 					bkgdRect.y=(int)(y_pos + 0.5f);
+					turret1.TankMoveY(-tank1.speed, deltaTime);
+					turret2.TankMoveY(-tank1.speed, deltaTime);
+					turret3.TankMoveY(-tank1.speed, deltaTime);
+					turret4.TankMoveY(-tank1.speed, deltaTime);
+
 				}
 				else{
 							y_pos = bkgdRect.y;
@@ -213,6 +301,10 @@ int main(int argc, char* argv[]){
 				if((bkgdRect.y < 0)){
 
 					bkgdRect.y=(int)(y_pos + 0.5f);
+					turret1.TankMoveY(tank1.speed, deltaTime);
+					turret2.TankMoveY(tank1.speed, deltaTime);
+					turret3.TankMoveY(tank1.speed, deltaTime);
+					turret4.TankMoveY(tank1.speed, deltaTime);
 				}else{
 					y_pos = bkgdRect.y;
 				}
@@ -222,6 +314,9 @@ int main(int argc, char* argv[]){
 			}
 
 		turret1.Update(deltaTime, tank1.posRect);
+		turret2.Update(deltaTime, tank1.posRect);
+		turret3.Update(deltaTime, tank1.posRect);
+		turret4.Update(deltaTime, tank1.posRect);
 
 
 		SDL_RenderClear(renderer);
@@ -233,7 +328,13 @@ int main(int argc, char* argv[]){
 		tank1.Draw(renderer);
 
 		turret1.Draw(renderer);
+		turret2.Draw(renderer);
+		turret3.Draw(renderer);
+		turret4.Draw(renderer);
 		//turret1.Draw(renderer);
+
+		SDL_RenderCopy(renderer, playerTexture, NULL , &PlayerPos);
+		SDL_RenderCopy(renderer, turretTexture, NULL , &TurretPos);
 
 		SDL_RenderPresent(renderer);
 
